@@ -255,29 +255,46 @@ namespace LMSUser
                 }
                 else
                 {
-                    // Pay clicked
-                    string message = $"Monthly Payment: ₱{monthlyPayment:N2}\n\nDo you want to proceed with this payment?";
-                    DialogResult result = MessageBox.Show(message, "Confirm Payment", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    DialogResult choiceResult = MessageBox.Show(
+                        $"Monthly Payment: ₱{monthlyPayment:N2}\n\nDo you want to pay the monthly fee (Yes) or fully pay the remaining balance (No)?",
+                        "Choose Payment Option",
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Question,
+                        MessageBoxDefaultButton.Button1
+                    );
 
-                    if (result == DialogResult.Yes)
+                    string choice;
+                    if (choiceResult == DialogResult.Yes)
+                        choice = "monthly";
+                    else if (choiceResult == DialogResult.No)
+                        choice = "full";
+                    else
+                        return; // Cancel or closed
+
+                    if (choice == null) return;
+
+                    decimal paymentAmount;
+
+                    if (choice == "monthly")
                     {
-                        if (creditBalance < monthlyPayment)
-                        {
-                            MessageBox.Show("Insufficient credit balance to make this payment.", "Payment Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
-                        bool paymentSuccess = db.AddPaymentAndUpdateLoan(userID, loanId, monthlyPayment);
-                        if (paymentSuccess)
-                        {
-                            MessageBox.Show("Payment successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            SetupUserLoanGrid();
-                        }
-                        else
-                        {
-                            MessageBox.Show("An error occurred while processing the payment.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        paymentAmount = monthlyPayment;
                     }
+                    else // full payment
+                    {
+                        decimal remainingBalance = db.GetLoanRemainingBalance(loanId);
+                        paymentAmount = remainingBalance;
+                    }
+
+                    // Check balance
+                    if (creditBalance < paymentAmount)
+                    {
+                        MessageBox.Show("Insufficient credit balance to make this payment.", "Payment Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Process payment
+                    bool paymentSuccess = db.AddPaymentAndUpdateLoan(userID, loanId, paymentAmount);
+
                 }
             }
         }

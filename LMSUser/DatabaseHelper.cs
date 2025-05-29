@@ -261,6 +261,46 @@ namespace LMSUser
             }
         }
 
+        public bool UserHasUploadedDocuments(int userId)
+        {
+            string query = "SELECT ValidId, ProofOfIncome FROM Users WHERE UserID = @UserID";
+            SqlParameter[] parameters = {
+        new SqlParameter("@UserID", userId)
+    };
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddRange(parameters);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        object idImage = reader["ValidId"];
+                        object proofImage = reader["ProofOfIncome"];
+
+                        return idImage != DBNull.Value && proofImage != DBNull.Value;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public decimal GetLoanRemainingBalance(int loanId)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT NewBalance FROM Loan WHERE LoanID = @LoanID";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@LoanID", loanId);
+                return Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+
+
         private byte[] ImageToByteArray(Image image)
         {
             using (MemoryStream ms = new MemoryStream())

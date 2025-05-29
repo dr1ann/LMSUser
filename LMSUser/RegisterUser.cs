@@ -67,19 +67,27 @@ namespace LMSUser
             }
 
 
-            // Step 3: Check if Phone Number or Username already exists
-            string checkQuery = "SELECT 1 FROM Users WHERE PhoneNumber = @PhoneNumber OR Username = @Username";
+            // Step 3: Check if Phone Number, Username, or Full Name + DOB combination already exists
+            string checkQuery = @"SELECT 1 FROM Users 
+                      WHERE PhoneNumber = @PhoneNumber 
+                         OR Username = @Username
+                         OR (FirstName = @FirstName AND LastName = @LastName AND DateOfBirth = @DateOfBirth)";
             SqlParameter[] checkParams =
             {
-            new SqlParameter("@PhoneNumber", phoneNumber),
-            new SqlParameter("@Username", Username) // Update variable name to match actual username input
-};
+                new SqlParameter("@PhoneNumber", phoneNumber),
+                new SqlParameter("@Username", Username),
+                new SqlParameter("@FirstName", firstName),
+                new SqlParameter("@LastName", lastName),
+                new SqlParameter("@DateOfBirth", dateOfBirth)
+            };
 
             if (dbHelper.ValueExists(checkQuery, checkParams))
             {
-                MessageBox.Show("Phone number or username already exists!", "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Phone number, username, or a user with the same full name and date of birth already exists!",
+                                "Duplicate Entry", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
 
 
             // Step 4: Hash password

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,7 @@ namespace LMSUser
         private Label lblSeparator;
         private Label lblCurrentPage;
         private string _username;
+        private DatabaseHelper dbHelper = new DatabaseHelper();
 
         public LoanApplicationForm(int userID, string status, string username, UserForm parentForm)
         {
@@ -81,6 +83,17 @@ namespace LMSUser
                 ForeColor = Color.LightBlue
             };
 
+            if (dbHelper.UserHasUploadedDocuments(_userID))
+            {
+                pbID.Visible = false;
+                pbProof.Visible = false;
+                label7.Visible = false;
+                btnUploadProof.Visible = false;
+                lblProofStatus.Visible = false;
+                label8.Visible = false;
+                btnUploadID.Visible = false;
+                lblIDStatus.Visible = false;
+            }
 
 
             breadcrumbPanel.Controls.Add(linkDashboard);
@@ -274,10 +287,6 @@ namespace LMSUser
 
             return true; // just return true if everything is valid
         }
-
-
-
-
 
 
         private void SubmitLoanApplication()
