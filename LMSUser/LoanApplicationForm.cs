@@ -115,12 +115,12 @@ namespace LMSUser
         private Image _selectedValidIdImage;
         private Image _selectedProofImage;
 
+
+
+
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (!SaveImages()) // This ensures both images are checked and saved first
-            {
-                return; // Stop here if images are missing or saving failed
-            }
+            
 
             if (TryCalculateMonthlyPayment(out decimal monthly, out decimal totalInterest, out decimal newBalance, out string displayMessage))
             {
@@ -173,6 +173,24 @@ namespace LMSUser
                 return false;
             }
 
+            try
+            {
+                DatabaseHelper dba = new DatabaseHelper();
+                decimal maxLoan = dba.GetUserMaxLoanAmount(_userID);
+
+                if (loanAmount > maxLoan)
+                {
+                    message = $"Loan amount exceeds the user's approved maximum loan amount of ₱{maxLoan:N2}.";
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                message = "Error checking max loan amount: " + ex.Message;
+                return false;
+            }
+
+
             if (cbLoanTerm.SelectedItem == null)
             {
                 message = "Please select a loan term.";
@@ -187,8 +205,13 @@ namespace LMSUser
                 return false;
             }
 
+
+
+
             // Amortization logic
-            decimal annualInterestRate = 0.10m; // 10%
+
+            DatabaseHelper db = new DatabaseHelper();
+            decimal annualInterestRate = db.GetCurrentInterestRate();
             decimal monthlyInterestRate = annualInterestRate / 12;
 
             if (monthlyInterestRate == 0)
@@ -372,6 +395,40 @@ namespace LMSUser
             _parentForm.UserPanel.Controls.Add(dashboard);
         }
 
+
+
+
+        private void tbLoanAmount_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control characters like backspace
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Allow only digits
+            if (!char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+
+
+
+
+        private void tbLoanAmount_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txt = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(txt.Text)) return;
+
+            string value = txt.Text.Replace(",", "");
+
+            if (decimal.TryParse(value, out decimal number))
+            {
+                txt.TextChanged -= tbLoanAmount_TextChanged; // Avoid recursion
+                txt.Text = string.Format("{0:N0}", number);
+                txt.SelectionStart = txt.Text.Length; // Move caret to end
+                txt.TextChanged += tbLoanAmount_TextChanged;
+            }
+        }
+
+
         private void pbProof_Click(object sender, EventArgs e)
         {
 
@@ -382,10 +439,7 @@ namespace LMSUser
 
         }
 
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void lblProofStatus_Click(object sender, EventArgs e)
         {
@@ -394,13 +448,8 @@ namespace LMSUser
 
         private void label1_Click(object sender, EventArgs e)
         {
-
         }
-
-        private void roundedButton1_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void LoanApplicationForm_Load(object sender, EventArgs e)
         {

@@ -100,6 +100,13 @@ namespace LMSUser
             
         }
 
+        public void RefreshUserCredit()
+        {
+            DatabaseHelper db = new DatabaseHelper();
+            lblUserCredit.Text = "Credit Score: " + db.GetUserCreditBalance(userID).ToString("N0");
+        }
+
+
 
 
 
@@ -295,6 +302,8 @@ namespace LMSUser
                     // Process payment
                     bool paymentSuccess = db.AddPaymentAndUpdateLoan(userID, loanId, paymentAmount);
 
+                    RefreshUserCredit();
+
                 }
             }
         }
@@ -309,13 +318,16 @@ namespace LMSUser
 
 
 
-        private void btnBacktoUserLoanTable_Click(object sender, EventArgs e)
+        private void btnCashin_Click(object sender, EventArgs e)
         {
-            LoadUserLoans();
-        }
 
-        private void lblUserCredit_Click(object sender, EventArgs e)
-        {
+            parentForm.UserPanel.Controls.Clear();
+            string cleanUsername = lblUsername.Text.Replace("Welcome! ", "").Trim();
+            CashIn ci = new CashIn(parentForm.UserID, parentForm)
+            {
+                Dock = DockStyle.Fill
+            };
+            parentForm.UserPanel.Controls.Add(ci);
 
         }
     }

@@ -59,6 +59,9 @@ namespace LMSUser
             this.tbLoanAmount.Name = "tbLoanAmount";
             this.tbLoanAmount.Size = new System.Drawing.Size(200, 27);
             this.tbLoanAmount.TabIndex = 1;
+
+            this.tbLoanAmount.KeyPress += tbLoanAmount_KeyPress;
+            this.tbLoanAmount.TextChanged += tbLoanAmount_TextChanged;
             // 
             // label2
             // 

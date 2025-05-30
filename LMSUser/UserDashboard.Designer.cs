@@ -38,6 +38,7 @@ namespace LMSUser
             this.btnLogout = new LMSUser.UserDashboard.RoundedButton();
             this.dgvUserLoans = new System.Windows.Forms.DataGridView();
             this.btnApp = new LMSUser.UserDashboard.RoundedButton();
+            this.btnCashin = new LMSUser.UserDashboard.RoundedButton();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUserLoans)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +54,7 @@ namespace LMSUser
             this.lblUserCredit.Size = new System.Drawing.Size(91, 43);
             this.lblUserCredit.TabIndex = 9;
             this.lblUserCredit.Text = "label1";
-            this.lblUserCredit.Click += new System.EventHandler(this.lblUserCredit_Click);
+         
             // 
             // btnApplyLoan
             // 
@@ -117,11 +118,28 @@ namespace LMSUser
             this.btnApp.UseVisualStyleBackColor = false;
             this.btnApp.Click += new System.EventHandler(this.btnApplyLoan_Click);
             // 
+            // btnCashin
+            // 
+            this.btnCashin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(60)))), ((int)(((byte)(90)))));
+            this.btnCashin.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnCashin.FlatAppearance.BorderSize = 0;
+            this.btnCashin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCashin.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnCashin.ForeColor = System.Drawing.Color.White;
+            this.btnCashin.Location = new System.Drawing.Point(680, 410);
+            this.btnCashin.Name = "btnCashin";
+            this.btnCashin.Size = new System.Drawing.Size(118, 40);
+            this.btnCashin.TabIndex = 14;
+            this.btnCashin.Text = "Cash in";
+            this.btnCashin.UseVisualStyleBackColor = false;
+            this.btnCashin.Click += new System.EventHandler(this.btnCashin_Click);
+            // 
             // UserDashboard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(30)))), ((int)(((byte)(54)))));
+            this.Controls.Add(this.btnCashin);
             this.Controls.Add(this.btnApp);
             this.Controls.Add(this.lblUserCredit);
             this.Controls.Add(this.dgvUserLoans);
@@ -145,6 +163,8 @@ namespace LMSUser
         private DataGridView dgvUserLoans;
         private RoundedButton btnApp;
         private RoundedButton btnLogout;
+        private RoundedButton btnCashin;
+
         class RoundedButton : Button
         {
             public int rdus = 10;

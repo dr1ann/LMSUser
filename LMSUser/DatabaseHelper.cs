@@ -18,7 +18,8 @@ namespace LMSUser
     internal class DatabaseHelper
     {
         // Replace with your actual SQL Server connection string
-        private readonly string connectionString = "Server=LAPTOP-GHQG6N7F\\SQLEXPRESS01;Database=DB_KASALIGAN_LOAN_SYSTEM;Trusted_Connection=True;";
+        //private readonly string connectionString = "Server=LAPTOP-GHQG6N7F\\SQLEXPRESS01;Database=DB_KASALIGAN_LOAN_SYSTEM;Trusted_Connection=True;";
+        private readonly string connectionString = "Server=DESKTOP-0TPQ7D6\\SQLEXPRESS01;Database=DB_KASALIGAN_LOAN_SYSTEM;Trusted_Connection=True;";
 
         // Method to get SQL Connection
         private SqlConnection GetConnection()
@@ -634,6 +635,73 @@ ORDER BY ps.MonthIndex;";
 
             return dt;
         }
+
+
+        public void AddUserCreditBalance(int userId, decimal amountToAdd)
+        {
+            string query = @"
+        UPDATE Users
+        SET CreditBalance = ISNULL(CreditBalance, 0) + @Amount
+        WHERE UserID = @UserID";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@Amount", amountToAdd);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
+        public decimal GetUserMaxLoanAmount(int userId)
+        {
+          
+            string query = "SELECT max_loan_amount FROM Users WHERE userID = @UserID";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                conn.Open();
+
+                object result = cmd.ExecuteScalar();
+                if (result != null && decimal.TryParse(result.ToString(), out decimal maxAmount))
+                {
+                    return maxAmount;
+                }
+                else
+                {
+                    throw new Exception("Unable to retrieve max loan amount for the user.");
+                }
+            }
+        }
+
+
+        public decimal GetCurrentInterestRate()
+        {
+            decimal rate = 0.10m; // fallback value
+
+            string query = "SELECT TOP 1 Rate FROM Interest ORDER BY ID DESC";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                if (result != null && result != DBNull.Value)
+                {
+                    rate = Convert.ToDecimal(result);
+                }
+            }
+
+            return rate;
+        }
+
+
+
 
 
 

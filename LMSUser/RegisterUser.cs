@@ -141,30 +141,51 @@ namespace LMSUser
             parentForm.LoginPanel.Controls.Add(UserLogin);
         }
 
-        private void tbFName_TextChanged(object sender, EventArgs e)
+        private void tbMonthlyIncome_KeyPress(object sender, KeyPressEventArgs e)
         {
+            // Allow control characters like backspace
+            if (char.IsControl(e.KeyChar))
+                return;
 
+            // Allow only digits
+            if (!char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+        private void tbPhoneNumber_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Allow control characters like backspace
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            // Allow only digits
+            if (!char.IsDigit(e.KeyChar))
+                e.Handled = true;
         }
 
-        private void textBox4_TextChanged(object sender, EventArgs e)
-        {
 
+
+
+        private void tbMonthlyIncome_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txt = sender as TextBox;
+            if (string.IsNullOrWhiteSpace(txt.Text)) return;
+
+            string value = txt.Text.Replace(",", "");
+
+            if (decimal.TryParse(value, out decimal number))
+            {
+                txt.TextChanged -= tbMonthlyIncome_TextChanged; // Avoid recursion
+                txt.Text = string.Format("{0:N0}", number);
+                txt.SelectionStart = txt.Text.Length; // Move caret to end
+                txt.TextChanged += tbMonthlyIncome_TextChanged;
+            }
         }
 
-        private void label14_Click(object sender, EventArgs e)
-        {
 
-        }
 
-        private void label13_Click(object sender, EventArgs e)
-        {
 
-        }
 
-        private void RegisterUser_Load(object sender, EventArgs e)
-        {
 
-        }
 
         private void RegisterUser_Load_1(object sender, EventArgs e)
         {

@@ -29,6 +29,12 @@ namespace LMSUser
             var dashboard = new UserDashboard(FullName, Status, UserID, this);
             dashboard.Dock = DockStyle.Fill;
             UserPanel.Controls.Add(dashboard);
+
+           
         }
+
+
+
+
     }
 }

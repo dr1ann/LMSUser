@@ -346,6 +346,7 @@ namespace LMSUser
             this.tbPhoneNumber.Name = "tbPhoneNumber";
             this.tbPhoneNumber.Size = new System.Drawing.Size(178, 27);
             this.tbPhoneNumber.TabIndex = 68;
+            this.tbPhoneNumber.KeyPress += tbPhoneNumber_KeyPress;
             // 
             // label6
             // 
@@ -396,6 +397,10 @@ namespace LMSUser
             this.tbMonthlyIncome.Name = "tbMonthlyIncome";
             this.tbMonthlyIncome.Size = new System.Drawing.Size(178, 27);
             this.tbMonthlyIncome.TabIndex = 72;
+            // Attach handlers for formatting
+            this.tbMonthlyIncome.KeyPress += tbMonthlyIncome_KeyPress;
+            this.tbMonthlyIncome.TextChanged += tbMonthlyIncome_TextChanged;
+
             // 
             // label9
             // 
